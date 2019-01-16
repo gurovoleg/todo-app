@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+
+	<!-- Titles -->
+	<title>ToDo</title>
+   
+   	<!-- Адаптивная  верстка -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<!-- Syles -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+	<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+	<div class="container">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">Todo application</h4>
+			</div>
+			<div class="card-body">
+				<div class="input-group" id='actionPanel1'>
+					<div class="input-group-prepend">
+						<span>
+							<button id="selectAllAction" class="btn btn-outline-primary" type="button">Select all</button>
+						</span>
+					</div>
+					<input type="text" class="form-control" id='input'>
+				</div>
+				<div id='actionPanel2'>
+					<div class="btn-group btn-block">
+						<button type='button' class='btn btn-success' id="doneAction">Done</button>
+						<button type='button' class='btn btn-info' id="restoreAction">Restore</button>
+						<button type='button' class='btn btn-danger' id="removeAction">Remove</button>
+					</div>
+				</div>
+			</div>
+			<ul class="list-group list-group-flush" id='list'>
+			</ul>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<!-- <script src="js/index.js"></script> -->
+	<script src="js/main.js"></script>
+	<!-- <script src="js/view.js"></script> -->
+	
+</body>
+</html>

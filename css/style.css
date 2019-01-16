@@ -1,0 +1,11 @@
+@import "utils.css";
+
+html {
+  font-family: Sans-Serif;
+}
+
+.todoDone {
+	text-decoration: line-through;
+	font-style: italic;
+	color: gray;
+}
