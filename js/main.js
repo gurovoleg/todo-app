@@ -1,4 +1,4 @@
-// vars
+// vars 
 const todoList = document.getElementById('list'),
 	  actionPanel1 = document.getElementById('actionPanel1'),
 	  actionPanel2 = document.getElementById('actionPanel2'),
