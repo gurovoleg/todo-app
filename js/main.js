@@ -48,7 +48,7 @@ function updateTodoList(props) {
 
 // Update DOM tree
 function displayTodoList() {
-	isChecked = todos.some((item) => item.checked);
+	isChecked = todos.some( (item) => item.checked );
 	
 	isChecked ? actionPanel2.classList.remove('d-none') : actionPanel2.classList.add('d-none');
 	isChecked ? actionPanel1.classList.add('d-none') : actionPanel1.classList.remove('d-none');
@@ -86,9 +86,9 @@ function createTodoItem(item) {
 		const button = document.createElement('button');
 		button.setAttribute('style', 'float:right');
 
-		// button.addEventListener('click', function(e){
+		// button.addEventListener('click', function(){
 		// 	item.done = !item.done;
-		// 	displayItems(todos);
+		// 	displayTodoList();
 		// }) 
 			
 		item.done ? button.className = 'btn btn-outline-danger' : button.className = 'btn btn-outline-success';;
@@ -113,8 +113,8 @@ inputElement.addEventListener('keyup', (e) => {
 
 todoList.addEventListener('click',(e) => {
 	if (e.target.tagName.toLowerCase() == 'button') {
-		const idx = e.target.previousSibling.getAttribute('for');
-		updateTodoList({action:'done', id:idx});
+		const id = e.target.previousSibling.getAttribute('for');
+		updateTodoList({action:'done', id:id});
 	}
 
 	if (e.target.tagName.toLowerCase() == 'input') {
@@ -122,19 +122,19 @@ todoList.addEventListener('click',(e) => {
 	}
 })
 
-document.getElementById('selectAllAction').addEventListener('click',(e) => {
+document.getElementById('selectAllAction').addEventListener('click',() => {
 	updateTodoList({action:'select', isSelected:true});
 })
 
-document.getElementById('restoreAction').addEventListener('click',(e) => {
+document.getElementById('restoreAction').addEventListener('click',() => {
 	updateTodoList({action:'select', isSelected: false});
 })
 
-document.getElementById('doneAction').addEventListener('click',(e) => {
+document.getElementById('doneAction').addEventListener('click',() => {
 	updateTodoList({action:'doneAll'});
 })
 
-document.getElementById('removeAction').addEventListener('click',(e) => {
+document.getElementById('removeAction').addEventListener('click',() => {
 	updateTodoList({action:'remove'});
 })
 
