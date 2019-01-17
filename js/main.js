@@ -1,16 +1,26 @@
 // vars 
-const todoList = document.getElementById('list'),
-	  actionPanel1 = document.getElementById('actionPanel1'),
-	  actionPanel2 = document.getElementById('actionPanel2'),
-	  inputElement = document.getElementById('input')
-let idCounter = 0,
-	isChecked = false,
-	todos = [];
+const listElement = document.getElementById('list')
+const actionPanel1 = document.getElementById('actionPanel1')
+const actionPanel2 = document.getElementById('actionPanel2')
+const inputElement = document.getElementById('input')
+const isDevelopmentMode = true
+let idCounter = 0
+let	isChecked = false
+let	todos = []
+
+// generate test Data
+function generateTestData(total = 5) {
+	for(let i = 1; i <= total; i++) {
+		let name = `item ${i}`
+		todos.push(createItem(name))
+	}
+}
 
 // create data item
 function createItem(name) {
+	const id = ++idCounter
 	return {
-		id: `todoItem${++idCounter}`,
+		id: id,
 		label: name,
 		done: false,
 		checked: false
@@ -18,29 +28,27 @@ function createItem(name) {
 }
 
 // Update object data
-function updateTodoList(props) {
-	
-	const {action, isSelected, name, id} = props;
-	
+function updateTodoList({action, isDone, name, id}) {
+			
 	if (action == 'add') {
-		todos.push(createItem(name));
-	} else if (action == 'done' || action == 'checked') {
-		todos.map( (item) => {
-			if (item.id == id) {
-				item[action] = !item[action];
-			}
-		})
-	} else if (action == 'doneAll') {
-		todos.map( (item) => {
+		todos.push(createItem(name))
+	} 
+
+	if (action == 'doneAll') {
+		for(let item of todos) {
 			if (item.checked) {
-				item.done = true;
+				item.done = isDone
 			}
-			item.checked = false;
-		});
-	} else if (action == 'select') {
-		todos.map( (item) => item.checked = isSelected );
-	} else if (action == 'remove') {
-		todos = todos.filter( (item) => !item.checked );
+			item.checked = false
+		}
+	} 
+	
+	if (action == 'select') {
+		todos.forEach((item) => item.checked = true)
+	} 
+	
+	if (action == 'remove') {
+		todos = todos.filter((item) => !item.checked)
 	}
 
 	displayTodoList();
@@ -48,99 +56,119 @@ function updateTodoList(props) {
 
 // Update DOM tree
 function displayTodoList() {
-	isChecked = todos.some( (item) => item.checked );
+	isChecked = todos.some((item) => item.checked)
 	
-	isChecked ? actionPanel2.classList.remove('d-none') : actionPanel2.classList.add('d-none');
-	isChecked ? actionPanel1.classList.add('d-none') : actionPanel1.classList.remove('d-none');
-
-	todoList.innerHTML = '';
+	if (isChecked) {
+		actionPanel2.classList.remove('d-none')
+		actionPanel1.classList.add('d-none')
+	} else {
+		actionPanel2.classList.add('d-none')
+		actionPanel1.classList.remove('d-none')
+	}
+	
+	listElement.innerHTML = ''
 	
 	if (todos) {
-		todos.forEach( (item) => todoList.append(createTodoItem(item)) );
+		todos.forEach( (item) => listElement.append(createLiElement(item)) )
 	}
 }
 
 // prepare DOM data
-function createTodoItem(item) {
+function createLiElement(item) {
 	
-	const li = document.createElement('li');
+	const li = document.createElement('li')
 	li.className = 'list-group-item';
 		
-	const div = document.createElement('div');
-	div.className = 'form-group form-check';
+	const div = document.createElement('div')
+	div.className = 'form-group form-check'
 	
-	const input = document.createElement('input');
-	input.className = 'form-check-input';
-	input.setAttribute('id', item.id);
-	input.setAttribute('type', 'checkbox');
+	const input = document.createElement('input');	input.className = 'form-check-input'
+	input.setAttribute('id', item.id)
+	input.setAttribute('type', 'checkbox')
 	input.checked = item.checked;
+
+	input.addEventListener('click', () => {
+		item.checked = !item.checked
+		displayTodoList()
+	})
 	
-	const label = document.createElement('label');
-	!item.done ? label.className = 'form-check-label' : label.className = 'form-check-label todoDone';
-	label.setAttribute('for', item.id);
-	label.innerHTML = item.label;
+	const label = document.createElement('label')
+	label.className = item.done ? 'form-check-label todoDone' : 'form-check-label'
+	label.setAttribute('for', item.id)
+	// label.innerHTML = item.label
+	label.textContent = item.label
 		
-	div.append(input, label);
+	div.append(input, label)
 	
 	if (!isChecked) {
-		const button = document.createElement('button');
-		button.setAttribute('style', 'float:right');
+		const button = document.createElement('button')
+		button.setAttribute('style', 'float:right')
 
-		// button.addEventListener('click', function(){
-		// 	item.done = !item.done;
-		// 	displayTodoList();
-		// }) 
+		button.addEventListener('click', function(){
+			item.done = !item.done
+			displayTodoList()
+		}) 
 			
-		item.done ? button.className = 'btn btn-outline-danger' : button.className = 'btn btn-outline-success';;
-		item.done ? button.innerHTML = 'restore' : button.innerHTML = 'Done';
-				
-		div.append(button);
+		if (item.done) {
+			button.className = 'btn btn-outline-danger'
+			button.innerHTML = 'restore'
+		} else {
+			button.className = 'btn btn-outline-success'
+			button.innerHTML = 'Done'
+		}
+						
+		div.append(button)
 	}
 		
-	li.append(div);
-	return li;
+	li.append(div)
+	return li
 }
 
 // eventListeners
 inputElement.addEventListener('keyup', (e) => {
-	const val = e.keyCode || e.charCode;
+	const keyCode = e.keyCode || e.charCode
+	const val = e.target.value.trim()
 	
-	if (val === 13) {
-		updateTodoList({action: 'add', name: e.target.value.trim()});
-		inputElement.value = '';	
+	if (keyCode !== 13 || val === '' ) {
+		return
 	}
-})
-
-todoList.addEventListener('click',(e) => {
-	if (e.target.tagName.toLowerCase() == 'button') {
-		const id = e.target.previousSibling.getAttribute('for');
-		updateTodoList({action:'done', id:id});
-	}
-
-	if (e.target.tagName.toLowerCase() == 'input') {
-		updateTodoList({action:'checked', id: e.target.id});
-	}
+	
+	updateTodoList({
+		action: 'add', 
+		name: val
+	})
+	
+	inputElement.value = ''	
 })
 
 document.getElementById('selectAllAction').addEventListener('click',() => {
-	updateTodoList({action:'select', isSelected:true});
+	updateTodoList({
+		action:'select'
+	})
 })
 
 document.getElementById('restoreAction').addEventListener('click',() => {
-	updateTodoList({action:'select', isSelected: false});
+	updateTodoList({
+		action:'doneAll', 
+		isDone: false
+	})
 })
 
 document.getElementById('doneAction').addEventListener('click',() => {
-	updateTodoList({action:'doneAll'});
+	updateTodoList({
+		action:'doneAll', 
+		isDone: true
+	})
 })
 
 document.getElementById('removeAction').addEventListener('click',() => {
-	updateTodoList({action:'remove'});
+	updateTodoList({
+		action:'remove'
+	})
 })
 
-// test Data
-todos.push(createItem('item 1'));
-todos.push(createItem('item 2'));
-todos.push(createItem('item 3'));
+if (isDevelopmentMode) {
+	generateTestData(1000);
+}
 
-displayTodoList();
+displayTodoList()
