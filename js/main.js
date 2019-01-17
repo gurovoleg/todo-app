@@ -7,15 +7,20 @@ let idCounter = 0,
 	isChecked = false,
 	todos = [];
 
-// test Data
-todos.push(createItem('item 1'));
-todos.push(createItem('item 2'));
-todos.push(createItem('item 3'));
+// create data item
+function createItem(name) {
+	return {
+		id: `todoItem${++idCounter}`,
+		label: name,
+		done: false,
+		checked: false
+	}
+}
 
 // Update object data
 function updateTodoList(props) {
 	
-	const {action, name, id, isAll = false, isTrue} = props;
+	const {action, isSelected, name, id} = props;
 	
 	if (action == 'add') {
 		todos.push(createItem(name));
@@ -32,10 +37,8 @@ function updateTodoList(props) {
 			}
 			item.checked = false;
 		});
-	} else if (action == 'selectAll') {
-		todos.map( (item) => item.checked = true );
-	} else if (action == 'restore') {
-		todos.map( (item) => item.checked = false );
+	} else if (action == 'select') {
+		todos.map( (item) => item.checked = isSelected );
 	} else if (action == 'remove') {
 		todos = todos.filter( (item) => !item.checked );
 	}
@@ -43,32 +46,17 @@ function updateTodoList(props) {
 	displayTodoList();
 }
 
-// create data item
-function createItem(name) {
-	const idx = `todoItem${++idCounter}`;
-	const newItem = {
-		id: idx,
-		label: name,
-		done: false,
-		checked: false
-	}
-	return newItem;
-}
-
 // Update DOM tree
 function displayTodoList() {
 	isChecked = todos.some((item) => item.checked);
-	console.log(isChecked);
-
+	
 	isChecked ? actionPanel2.classList.remove('d-none') : actionPanel2.classList.add('d-none');
 	isChecked ? actionPanel1.classList.add('d-none') : actionPanel1.classList.remove('d-none');
 
 	todoList.innerHTML = '';
 	
 	if (todos) {
-		todos.forEach( (item) => {
-			todoList.append(createTodoItem(item));
-		})
+		todos.forEach( (item) => todoList.append(createTodoItem(item)) );
 	}
 }
 
@@ -88,10 +76,10 @@ function createTodoItem(item) {
 	input.checked = item.checked;
 	
 	const label = document.createElement('label');
-	label.className = 'form-check-label';
+	!item.done ? label.className = 'form-check-label' : label.className = 'form-check-label todoDone';
 	label.setAttribute('for', item.id);
 	label.innerHTML = item.label;
-	
+		
 	div.append(input, label);
 	
 	if (!isChecked) {
@@ -103,14 +91,9 @@ function createTodoItem(item) {
 		// 	displayItems(todos);
 		// }) 
 			
-		if (item.done) {
-			label.className += ' todoDone';
-			button.className = 'btn btn-outline-danger';
-			button.innerHTML = 'restore';
-		} else {
-			button.className = 'btn btn-outline-success';
-			button.innerHTML = 'Done';
-		}		
+		item.done ? button.className = 'btn btn-outline-danger' : button.className = 'btn btn-outline-success';;
+		item.done ? button.innerHTML = 'restore' : button.innerHTML = 'Done';
+				
 		div.append(button);
 	}
 		
@@ -135,25 +118,29 @@ todoList.addEventListener('click',(e) => {
 	}
 
 	if (e.target.tagName.toLowerCase() == 'input') {
-		const idx = e.target.id;
-		updateTodoList({action:'checked', id:idx});
+		updateTodoList({action:'checked', id: e.target.id});
 	}
 })
 
 document.getElementById('selectAllAction').addEventListener('click',(e) => {
-	updateTodoList({action:'selectAll'});
-})
-
-document.getElementById('doneAction').addEventListener('click',(e) => {
-	updateTodoList({action:'doneAll', isAll: true});
+	updateTodoList({action:'select', isSelected:true});
 })
 
 document.getElementById('restoreAction').addEventListener('click',(e) => {
-	updateTodoList({action:'restore'});
+	updateTodoList({action:'select', isSelected: false});
+})
+
+document.getElementById('doneAction').addEventListener('click',(e) => {
+	updateTodoList({action:'doneAll'});
 })
 
 document.getElementById('removeAction').addEventListener('click',(e) => {
 	updateTodoList({action:'remove'});
 })
+
+// test Data
+todos.push(createItem('item 1'));
+todos.push(createItem('item 2'));
+todos.push(createItem('item 3'));
 
 displayTodoList();
